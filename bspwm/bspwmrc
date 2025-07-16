@@ -1,30 +1,55 @@
-#! /bin/sh
+#!/bin/sh
 
+### -------------------------------
+### Autostart de aplicaciones clave
+### -------------------------------
+
+# Iniciar sxhkd (gestor de atajos de teclado) si no está corriendo
 pgrep -x sxhkd >/dev/null || sxhkd &
 
+### -------------------------------
+### Configuración básica de BSPWM
+### -------------------------------
+
+# Crear 7 escritorios nombrados con números chinos (一=1, 二=2, ..., 七=7)
 bspc monitor -d 一 二 三 四 五 六 七
 
-bspc config border_width 1.5
+# Grosor del borde de las ventanas (en píxeles)
+bspc config border_width 1
+
+# Espacio entre ventanas (en píxeles)
 bspc config window_gap 7
 
-bspc config split_ratio 3
-bspc config borderless_monocle true
-bspc config gapless_monocle true
+# Proporción inicial al dividir nodos (1/3 para ventana primaria, 2/3 para secundaria)
+bspc config split_ratio 0.5
 
-bspc rule -a Gimp desktop='^8' state=floating follow=on
-bspc rule -a Chromium desktop='^2'
-bspc rule -a mplayer2 state=floating
-bspc rule -a Kupfer.py focus=on
-bspc rule -a Screenkey manage=off
-bspc rule -a mpv state=floating
+# Modo monociclo (sin bordes y sin espacios entre ventanas)
+bspc config borderless_monocle true    # Sin bordes en modo monociclo
+bspc config gapless_monocle true       # Sin espacios entre ventanas en monociclo
 
+### -------------------------------
+### Reglas
+### -------------------------------
 
-# Wallpaper
-#feh --bg-scale ~/Imágenes/Wallpapers/fav/11.jpg
+#bspc config external_rules_command ~/.config/bspwm/external_rules
+
+bspc rule -a Thunar desktop='二' follow=on state=floating center=on
+bspc rule -a "VirtualBox Manager" desktop='三' follow=on state=floating center=on
+#bspc rule -a "VirtualBox Machine" desktop='二' follow=on # No jala
+bspc rule -a Zathura desktop='四' follow=on state=floating center=on
+bspc rule -a zen desktop='一'
+
+### -------------------------------
+### Personalización visual
+### -------------------------------
+
+# Fondo de pantalla aleatorio (cambia --bg-fill por --bg-scale si prefieres escalar)
 feh --randomize --no-fehbg --bg-fill ~/Imágenes/Wallpapers/fav/
+# Alternativa para fondo fijo:
+# feh --bg-scale ~/Imágenes/Wallpapers/fav/11.jpg
 
-# Polybar
+# Iniciar Polybar (si la tienes configurada, descomenta la línea siguiente)
 # /home/jose/polybar-collection/launch.sh
 
-#Picom
-picom -b &
+# Iniciar Picom (compositor para sombras y efectos)
+picom -b &  # El flag -b lo ejecuta en segundo plano (daemonize)
